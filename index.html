@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XV - Bosque Encantado</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Great+Vibes&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg-1:#04100c;
+      --bg-2:#081a13;
+      --bg-3:#0d241a;
+      --bg-4:#123124;
+
+      --gold-1:#d8b266;
+      --gold-2:#efdaab;
+      --gold-3:#b88835;
+
+      --ivory:#fffaf1;
+      --text:#f7f1e3;
+      --muted:#d8cab0;
+
+      --glass:rgba(255,255,255,.08);
+      --glass-strong:rgba(255,255,255,.11);
+      --border:rgba(255,229,170,.22);
+
+      --shadow:0 24px 60px rgba(0,0,0,.35);
+      --shadow-soft:0 14px 30px rgba(0,0,0,.24);
+
+      --radius-xl:34px;
+      --radius-lg:26px;
+      --radius-md:20px;
+    }
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      font-family:'Montserrat', sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(122,170,106,.11), transparent 18%),
+        radial-gradient(circle at 85% 20%, rgba(255,223,145,.08), transparent 16%),
+        radial-gradient(circle at 50% 100%, rgba(51,104,74,.20), transparent 28%),
+        linear-gradient(180deg, var(--bg-1), var(--bg-2), var(--bg-3), var(--bg-4));
+      min-height:100vh;
+      overflow-x:hidden;
+      position:relative;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      background-image:
+        radial-gradient(circle, rgba(255,234,170,.50) 0 2px, transparent 3px),
+        radial-gradient(circle, rgba(198,255,210,.25) 0 1.5px, transparent 2.5px),
+        radial-gradient(circle, rgba(255,248,225,.20) 0 1.2px, transparent 2px);
+      background-size:170px 170px, 260px 260px, 320px 320px;
+      animation:floatParticles 26s linear infinite;
+      opacity:.26;
+    }
+
+    @keyframes floatParticles{
+      from{ transform:translateY(0); }
+      to{ transform:translateY(-70px); }
+    }
+
+    .mist{
+      position:fixed;
+      left:-15%;
+      width:130%;
+      height:240px;
+      border-radius:50%;
+      filter:blur(40px);
+      pointer-events:none;
+      z-index:0;
+      opacity:.18;
+    }
+
+    .mist-1{
+      bottom:-20px;
+      background:radial-gradient(circle, rgba(255,255,255,.18), transparent 65%);
+      animation:mistMove1 14s ease-in-out infinite alternate;
+    }
+
+    .mist-2{
+      bottom:80px;
+      background:radial-gradient(circle, rgba(241,212,140,.13), transparent 65%);
+      animation:mistMove2 18s ease-in-out infinite alternate;
+    }
+
+    .mist-3{
+      top:120px;
+      background:radial-gradient(circle, rgba(155,255,193,.08), transparent 65%);
+      animation:mistMove3 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes mistMove1{
+      from{ transform:translateX(-2%); }
+      to{ transform:translateX(2%); }
+    }
+    @keyframes mistMove2{
+      from{ transform:translateX(2%); }
+      to{ transform:translateX(-2%); }
+    }
+    @keyframes mistMove3{
+      from{ transform:translateX(-1%) translateY(0); }
+      to{ transform:translateX(2%) translateY(12px); }
+    }
+
+    #intro, #invitation{
+      position:relative;
+      z-index:2;
+      min-height:100vh;
+    }
+
+    #intro{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px 18px 40px;
+      text-align:center;
+      overflow:hidden;
+    }
+
+    #invitation{
+      display:none;
+      padding:18px 14px 46px;
+      animation:pageEnter .85s ease;
+    }
+
+    @keyframes pageEnter{
+      from{
+        opacity:0;
+        transform:translateY(18px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
+    .intro-wrap{
+      width:min(100%, 440px);
+      position:relative;
+      z-index:3;
+    }
+
+    .intro-top{
+      color:var(--muted);
+      letter-spacing:4px;
+      text-transform:uppercase;
+      font-size:.72rem;
+      margin-bottom:14px;
+    }
+
+    .intro-title{
+      font-family:'Great Vibes', cursive;
+      font-size:clamp(3.4rem, 11vw, 5.2rem);
+      line-height:.92;
+      color:var(--gold-2);
+      text-shadow:0 0 18px rgba(255,225,160,.18);
+      margin-bottom:14px;
+    }
+
+    .intro-sub{
+      font-size:.96rem;
+      line-height:1.7;
+      color:#efe4cf;
+      margin-bottom:30px;
+      max-width:360px;
+      margin-inline:auto;
+    }
+
+    /* HADAS */
+    .fairies{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:1;
+      overflow:hidden;
+    }
+
+    .fairy{
+      position:absolute;
+      width:18px;
+      height:18px;
+      opacity:.95;
+      filter:drop-shadow(0 0 10px rgba(255,240,190,.55));
+    }
+
+    .fairy::before{
+      content:"";
+      position:absolute;
+      left:50%;
+      top:50%;
+      width:8px;
+      height:8px;
+      transform:translate(-50%, -50%);
+      border-radius:50%;
+      background:radial-gradient(circle, #fffbe8 0%, #ffe7a8 55%, rgba(255,231,168,.1) 100%);
+      box-shadow:0 0 14px rgba(255,235,170,.75);
+      z-index:3;
+    }
+
+    .fairy::after{
+      content:"";
+      position:absolute;
+      left:50%;
+      top:50%;
+      width:42px;
+      height:10px;
+      transform:translate(-70%, -50%);
+      background:linear-gradient(90deg, rgba(255,245,210,0), rgba(255,235,170,.28), rgba(255,235,170,0));
+      filter:blur(2px);
+      z-index:1;
+    }
+
+    .fairy .wing{
+      position:absolute;
+      width:9px;
+      height:13px;
+      background:radial-gradient(circle at 40% 40%, rgba(255,255,255,.95), rgba(220,255,245,.55) 55%, rgba(255,255,255,0) 100%);
+      border-radius:70%;
+      opacity:.85;
+      z-index:2;
+    }
+
+    .fairy .wing.left-top{ left:1px; top:0; transform:rotate(-30deg); }
+    .fairy .wing.right-top{ right:1px; top:0; transform:rotate(30deg); }
+    .fairy .wing.left-bottom{ left:2px; top:6px; width:8px; height:10px; transform:rotate(-55deg); opacity:.7; }
+    .fairy .wing.right-bottom{ right:2px; top:6px; width:8px; height:10px; transform:rotate(55deg); opacity:.7; }
+
+    .fairy-1{ left:8%; top:18%; animation:f1 11s ease-in-out infinite; }
+    .fairy-2{ right:8%; top:26%; animation:f2 13s ease-in-out infinite; }
+    .fairy-3{ left:12%; bottom:18%; animation:f3 12s ease-in-out infinite; }
+    .fairy-4{ right:12%; bottom:14%; animation:f4 10s ease-in-out infinite; }
+
+    @keyframes f1{
+      0%,100%{ transform:translate(0,0) scale(1); }
+      25%{ transform:translate(24px,-18px) scale(1.08); }
+      50%{ transform:translate(46px,10px) scale(.95); }
+      75%{ transform:translate(18px,24px) scale(1.05); }
+    }
+    @keyframes f2{
+      0%,100%{ transform:translate(0,0) scale(1); }
+      25%{ transform:translate(-30px,14px) scale(1.06); }
+      50%{ transform:translate(-46px,-10px) scale(.96); }
+      75%{ transform:translate(-18px,-28px) scale(1.04); }
+    }
+    @keyframes f3{
+      0%,100%{ transform:translate(0,0) scale(1); }
+      25%{ transform:translate(26px,-22px) scale(1.08); }
+      50%{ transform:translate(52px,6px) scale(.94); }
+      75%{ transform:translate(14px,18px) scale(1.02); }
+    }
+    @keyframes f4{
+      0%,100%{ transform:translate(0,0) scale(1); }
+      25%{ transform:translate(-24px,-16px) scale(1.06); }
+      50%{ transform:translate(-44px,12px) scale(.95); }
+      75%{ transform:translate(-18px,24px) scale(1.03); }
+    }
+
+    /* SOBRE */
+    .envelope-scene{
+      position:relative;
+      width:min(88vw, 360px);
+      margin:0 auto;
+      cursor:pointer;
+      perspective:1400px;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      z-index:4;
+    }
+
+    .magic-halo{
+      position:absolute;
+      inset:-24px;
+      border-radius:40px;
+      background:radial-gradient(circle, rgba(255,224,145,.20), transparent 58%);
+      filter:blur(20px);
+      pointer-events:none;
+      animation:haloPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes haloPulse{
+      0%,100%{ opacity:.75; transform:scale(1); }
+      50%{ opacity:1; transform:scale(1.03); }
+    }
+
+    .magic-burst{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      pointer-events:none;
+      z-index:15;
+    }
+
+    .magic-burst::before{
+      content:"";
+      width:120px;
+      height:120px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(255,234,184,.95), rgba(255,214,114,.18) 45%, transparent 70%);
+      opacity:0;
+      transform:scale(.2);
+    }
+
+    .envelope{
+      position:relative;
+      width:100%;
+      aspect-ratio:1.12/1;
+      transform-style:preserve-3d;
+      filter:drop-shadow(0 28px 42px rgba(0,0,0,.42));
+    }
+
+    .envelope-shadow{
+      position:absolute;
+      bottom:-20px;
+      left:50%;
+      transform:translateX(-50%);
+      width:76%;
+      height:28px;
+      background:radial-gradient(circle, rgba(0,0,0,.5), transparent 72%);
+      filter:blur(8px);
+      z-index:0;
+    }
+
+    .envelope-back,
+    .envelope-paper,
+    .envelope-front,
+    .envelope-flap{
+      position:absolute;
+      left:0;
+      width:100%;
+      border-radius:24px;
+    }
+
+    .envelope-back{
+      bottom:0;
+      height:100%;
+      background:linear-gradient(145deg, #efd6a0, #ddb97a 52%, #b78846);
+      border:1px solid rgba(255,255,255,.20);
+      overflow:hidden;
+    }
+
+    .envelope-back::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(135deg, rgba(255,255,255,.16), transparent 28%, transparent 72%, rgba(0,0,0,.05));
+    }
+
+    .envelope-paper{
+      left:7%;
+      width:86%;
+      bottom:12%;
+      height:78%;
+      border-radius:20px;
+      z-index:3;
+      background:linear-gradient(180deg, rgba(255,252,245,.99), rgba(245,236,214,.98));
+      border:1px solid rgba(190,150,80,.18);
+      box-shadow:0 14px 28px rgba(0,0,0,.16);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      transition:transform 1.1s ease;
+      overflow:hidden;
+    }
+
+    .envelope-paper::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:radial-gradient(circle at top, rgba(255,236,188,.18), transparent 40%);
+      pointer-events:none;
+    }
+
+    .paper-ornament{
+      width:64px;
+      height:64px;
+      border-radius:50%;
+      border:1px solid rgba(190,150,80,.28);
+      box-shadow:0 0 0 8px rgba(221,195,129,.10);
+      margin-bottom:16px;
+      position:relative;
+    }
+
+    .paper-ornament::before,
+    .paper-ornament::after{
+      content:"";
+      position:absolute;
+      inset:12px;
+      border:1px solid rgba(190,150,80,.26);
+      border-radius:50%;
+    }
+
+    .paper-preview-name{
+      font-family:'Great Vibes', cursive;
+      font-size:1.9rem;
+      color:#9b7534;
+      position:relative;
+      z-index:2;
+    }
+
+    .paper-preview-sub{
+      margin-top:6px;
+      font-size:.72rem;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      color:#b68b4a;
+      position:relative;
+      z-index:2;
+    }
+
+    .envelope-front{
+      bottom:0;
+      height:64%;
+      background:linear-gradient(145deg, #dcb97c, #cda669 56%, #a77c43);
+      clip-path:polygon(0 0, 50% 66%, 100% 0, 100% 100%, 0 100%);
+      z-index:5;
+      box-shadow:inset 0 0 12px rgba(255,255,255,.08);
+    }
+
+    .envelope-flap{
+      top:0;
+      height:58%;
+      background:linear-gradient(145deg, #f3ddad, #dfbe7d 58%, #c19351);
+      clip-path:polygon(0 0, 100% 0, 50% 100%);
+      transform-origin:top center;
+      z-index:8;
+      transition:transform 1.1s ease;
+      box-shadow:inset 0 -8px 16px rgba(0,0,0,.08);
+    }
+
+    .wax-seal{
+      position:absolute;
+      left:50%;
+      top:40%;
+      transform:translate(-50%, -50%);
+      width:70px;
+      height:70px;
+      border-radius:50%;
+      background:radial-gradient(circle at 30% 30%, #ff9797, #98152e 72%);
+      border:3px solid rgba(255,240,220,.18);
+      box-shadow:0 10px 18px rgba(0,0,0,.24), 0 0 20px rgba(255,175,175,.14);
+      z-index:9;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transition:transform .8s ease, opacity .8s ease;
+    }
+
+    .wax-seal span{
+      font-family:'Cinzel', serif;
+      font-size:1.08rem;
+      font-weight:700;
+      color:#ffeccf;
+      letter-spacing:1px;
+    }
+
+    .spark{
+      position:absolute;
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:radial-gradient(circle, #fffbe5, rgba(255,233,164,.25));
+      box-shadow:0 0 12px rgba(255,231,173,.52);
+      animation:floatSpark 4s ease-in-out infinite;
+    }
+
+    .spark.s1{ top:16%; left:12%; animation-delay:0s; }
+    .spark.s2{ top:24%; right:14%; animation-delay:.8s; }
+    .spark.s3{ bottom:18%; left:15%; animation-delay:1.5s; }
+    .spark.s4{ bottom:16%; right:15%; animation-delay:2.1s; }
+    .spark.s5{ top:46%; left:-6%; animation-delay:1.2s; }
+    .spark.s6{ top:44%; right:-6%; animation-delay:2.7s; }
+
+    @keyframes floatSpark{
+      0%,100%{ transform:translateY(0) scale(1); opacity:.55; }
+      50%{ transform:translateY(-12px) scale(1.2); opacity:1; }
+    }
+
+    .envelope-scene.open .magic-burst::before{
+      animation:burst 1s ease forwards;
+    }
+
+    @keyframes burst{
+      0%{ opacity:0; transform:scale(.2); }
+      30%{ opacity:1; }
+      100%{ opacity:0; transform:scale(2.8); }
+    }
+
+    .envelope-scene.open .envelope-flap{ transform:rotateX(180deg); }
+    .envelope-scene.open .envelope-paper{ transform:translateY(-115px); }
+    .envelope-scene.open .wax-seal{
+      transform:translate(-50%, -50%) scale(1.18);
+      opacity:0;
+    }
+
+    .tap-note{
+      margin-top:22px;
+      font-size:.8rem;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      color:var(--gold-2);
+      position:relative;
+      z-index:4;
+    }
+
+    /* INVITACION */
+    .main-wrapper{
+      width:min(100%, 470px);
+      margin:0 auto;
+    }
+
+    .card{
+      background:linear-gradient(180deg, var(--glass-strong), var(--glass));
+      border:1px solid var(--border);
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+      box-shadow:var(--shadow);
+    }
+
+    .hero-card{
+      position:relative;
+      overflow:hidden;
+      border-radius:var(--radius-xl);
+      padding:26px 16px 22px;
+      text-align:center;
+      margin-bottom:16px;
+    }
+
+    .hero-card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:radial-gradient(circle at top, rgba(255,226,150,.12), transparent 40%);
+      pointer-events:none;
+    }
+
+    .hero-glow{
+      position:absolute;
+      top:-60px;
+      left:50%;
+      transform:translateX(-50%);
+      width:260px;
+      height:120px;
+      background:radial-gradient(circle, rgba(255,224,145,.22), transparent 72%);
+      pointer-events:none;
+    }
+
+    .hero-pretitle,
+    .section-mini,
+    .action-mini{
+      font-size:.72rem;
+      letter-spacing:3px;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin-bottom:10px;
+    }
+
+    .hero-name{
+      font-family:'Great Vibes', cursive;
+      font-size:3.25rem;
+      line-height:.95;
+      color:var(--gold-2);
+      margin-bottom:14px;
+      text-shadow:0 0 18px rgba(255,222,155,.14);
+    }
+
+    .hero-date{
+      font-size:.95rem;
+      line-height:1.7;
+      color:#efe4cd;
+      margin-bottom:18px;
+    }
+
+    .hero-photos{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .photo-frame{
+      position:relative;
+      border-radius:24px;
+      padding:6px;
+      overflow:hidden;
+      background:linear-gradient(145deg, rgba(241,219,159,.32), rgba(255,255,255,.08));
+      box-shadow:var(--shadow-soft);
+      border:1px solid rgba(255,236,188,.14);
+    }
+
+    .photo-frame::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:24px;
+      box-shadow:inset 0 0 30px rgba(255,255,255,.04);
+      pointer-events:none;
+    }
+
+    .photo-frame img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      border-radius:18px;
+    }
+
+    .photo-large{
+      grid-column:1 / -1;
+      height:320px;
+    }
+
+    .photo-small{
+      height:155px;
+    }
+
+    .welcome-card,
+    .date-card,
+    .moments-card,
+    .section-card{
+      border-radius:var(--radius-lg);
+      padding:24px 16px;
+      margin-bottom:16px;
+    }
+
+    .section-icon-wrap{
+      display:flex;
+      justify-content:center;
+      margin-bottom:14px;
+    }
+
+    .section-icon{
+      width:78px;
+      height:78px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,245,220,.2), rgba(255,255,255,.04)),
+        linear-gradient(145deg, rgba(248,227,174,.16), rgba(255,255,255,.03));
+      border:1px solid rgba(255,230,175,.30);
+      box-shadow:
+        0 10px 24px rgba(0,0,0,.18),
+        inset 0 0 18px rgba(255,255,255,.05);
+    }
+
+    .section-icon svg{
+      width:40px;
+      height:40px;
+      fill:var(--gold-2);
+      display:block;
+    }
+
+    .welcome-text,
+    .date-text,
+    .dress-text,
+    .mural-text,
+    .confirm-text,
+    .closing-text{
+      max-width:320px;
+      margin:0 auto;
+      text-align:center;
+      line-height:1.9;
+      color:#f1e7d2;
+      font-size:.95rem;
+    }
+
+    .highlight-date{
+      font-family:'Cinzel', serif;
+      font-size:1.05rem;
+      line-height:1.9;
+      text-align:center;
+      color:var(--gold-2);
+    }
+
+    .section-deco{
+      width:82px;
+      height:2px;
+      margin:0 auto 16px;
+      background:linear-gradient(90deg, transparent, var(--gold-1), transparent);
+    }
+
+    .section-title{
+      font-family:'Cinzel', serif;
+      font-size:1.34rem;
+      text-align:center;
+      color:var(--ivory);
+      margin-bottom:18px;
+    }
+
+    .countdown-grid{
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:10px;
+    }
+
+    .count-box{
+      padding:16px 10px;
+      border-radius:18px;
+      text-align:center;
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border:1px solid rgba(255,228,170,.16);
+      box-shadow:inset 0 0 18px rgba(255,255,255,.03);
+    }
+
+    .count-box span{
+      display:block;
+      font-family:'Cinzel', serif;
+      font-size:1.8rem;
+      color:var(--gold-2);
+      margin-bottom:6px;
+    }
+
+    .count-box small{
+      color:var(--muted);
+      text-transform:uppercase;
+      font-size:.68rem;
+      letter-spacing:1px;
+    }
+
+    .moments-grid{
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:10px;
+    }
+
+    .moment-box{
+      padding:16px 10px;
+      border-radius:18px;
+      text-align:center;
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border:1px solid rgba(255,228,170,.16);
+    }
+
+    .moment-icon{
+      width:48px;
+      height:48px;
+      margin:0 auto 10px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,245,220,.16), rgba(255,255,255,.03)),
+        linear-gradient(145deg, rgba(248,227,174,.10), rgba(255,255,255,.02));
+      border:1px solid rgba(255,230,175,.18);
+    }
+
+    .moment-icon svg{
+      width:24px;
+      height:24px;
+      fill:var(--gold-2);
+      display:block;
+    }
+
+    .moment-box strong{
+      display:block;
+      font-family:'Cinzel', serif;
+      color:var(--gold-2);
+      margin-bottom:6px;
+      font-size:.95rem;
+    }
+
+    .moment-box span{
+      color:#efe2c5;
+      font-size:.84rem;
+      line-height:1.6;
+    }
+
+    .info-grid{
+      display:block;
+    }
+
+    .info-card{
+      border-radius:var(--radius-lg);
+      padding:22px 16px;
+      margin-bottom:16px;
+      text-align:center;
+    }
+
+    .card-line{
+      width:62px;
+      height:2px;
+      background:linear-gradient(90deg, var(--gold-1), transparent);
+      margin:0 auto 14px;
+    }
+
+    .card-title{
+      font-family:'Cinzel', serif;
+      font-size:1.18rem;
+      line-height:1.45;
+      color:var(--ivory);
+      margin-bottom:10px;
+    }
+
+    .card-text{
+      color:#eee3cb;
+      line-height:1.75;
+      font-size:.95rem;
+      margin-bottom:6px;
+    }
+
+    .card-text.strong{
+      color:var(--gold-2);
+      font-weight:600;
+      margin-bottom:16px;
+    }
+
+    .lux-button{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:13px 20px;
+      border-radius:999px;
+      text-decoration:none;
+      color:#fff7e5;
+      background:linear-gradient(135deg, rgba(201,155,76,.62), rgba(119,83,28,.46));
+      border:1px solid rgba(255,233,182,.35);
+      box-shadow:0 10px 24px rgba(0,0,0,.22);
+      font-size:.9rem;
+      transition:transform .2s ease;
+    }
+
+    .lux-button:active{
+      transform:scale(.98);
+    }
+
+    .actions-grid{
+      display:grid;
+      gap:14px;
+      margin-bottom:14px;
+    }
+
+    .action-card{
+      position:relative;
+      display:block;
+      text-decoration:none;
+      border-radius:var(--radius-lg);
+      padding:22px 16px;
+      overflow:hidden;
+      transition:transform .2s ease;
+    }
+
+    .action-card:active{
+      transform:scale(.985);
+    }
+
+    .action-confirm{
+      background:
+        linear-gradient(180deg, rgba(67,126,86,.24), rgba(255,255,255,.05)),
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+    }
+
+    .action-wall{
+      background:
+        linear-gradient(180deg, rgba(146,107,48,.24), rgba(255,255,255,.05)),
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+    }
+
+    .action-shine{
+      position:absolute;
+      top:-35px;
+      left:-20px;
+      width:140px;
+      height:140px;
+      background:radial-gradient(circle, rgba(255,232,173,.15), transparent 70%);
+      pointer-events:none;
+    }
+
+    .action-card h3{
+      font-family:'Cinzel', serif;
+      color:var(--ivory);
+      font-size:1.16rem;
+      margin-bottom:8px;
+      text-align:center;
+    }
+
+    .action-card span{
+      color:#efe3c7;
+      line-height:1.7;
+      font-size:.92rem;
+      display:block;
+      text-align:center;
+    }
+
+    .closing-card{
+      border-radius:22px;
+      text-align:center;
+      padding:22px 14px;
+    }
+
+    .closing-name{
+      font-family:'Great Vibes', cursive;
+      font-size:2.2rem;
+      color:var(--gold-2);
+      margin-top:10px;
+    }
+
+    .section-reveal{
+      animation:fadeUp .8s ease both;
+    }
+
+    @keyframes fadeUp{
+      from{
+        opacity:0;
+        transform:translateY(16px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
+    @media (min-width: 700px){
+      .main-wrapper{
+        width:min(92%, 980px);
+      }
+
+      .hero-card{
+        padding:34px 24px 28px;
+      }
+
+      .hero-name{
+        font-size:4.6rem;
+      }
+
+      .hero-photos{
+        grid-template-columns:1fr 1.2fr 1fr;
+        gap:16px;
+        align-items:end;
+      }
+
+      .photo-large{
+        grid-column:auto;
+        height:390px;
+      }
+
+      .photo-small{
+        height:285px;
+      }
+
+      .info-grid{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:16px;
+      }
+
+      .actions-grid{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .countdown-grid{
+        grid-template-columns:repeat(4, 1fr);
+      }
+
+      .moments-grid{
+        grid-template-columns:repeat(4, 1fr);
+      }
+
+      .welcome-text,
+      .date-text,
+      .dress-text,
+      .mural-text,
+      .confirm-text,
+      .closing-text{
+        max-width:760px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="mist mist-1"></div>
+  <div class="mist mist-2"></div>
+  <div class="mist mist-3"></div>
+
+  <audio id="bgMusic" loop>
+    <source src="music/musica.mp3" type="audio/mpeg">
+  </audio>
+
+  <section id="intro">
+    <div class="fairies">
+      <div class="fairy fairy-1"><span class="wing left-top"></span><span class="wing right-top"></span><span class="wing left-bottom"></span><span class="wing right-bottom"></span></div>
+      <div class="fairy fairy-2"><span class="wing left-top"></span><span class="wing right-top"></span><span class="wing left-bottom"></span><span class="wing right-bottom"></span></div>
+      <div class="fairy fairy-3"><span class="wing left-top"></span><span class="wing right-top"></span><span class="wing left-bottom"></span><span class="wing right-bottom"></span></div>
+      <div class="fairy fairy-4"><span class="wing left-top"></span><span class="wing right-top"></span><span class="wing left-bottom"></span><span class="wing right-bottom"></span></div>
+    </div>
+
+    <div class="intro-wrap">
+      <p class="intro-top">Una noche mágica está por comenzar</p>
+      <h1 class="intro-title">Bosque Encantado</h1>
+      <p class="intro-sub">Toca el sobre y descubre una invitación creada para una noche inolvidable.</p>
+
+      <div class="envelope-scene" id="sobre">
+        <div class="magic-halo"></div>
+        <div class="magic-burst"></div>
+
+        <div class="envelope">
+          <div class="envelope-shadow"></div>
+          <div class="envelope-back"></div>
+
+          <div class="envelope-paper">
+            <div class="paper-ornament"></div>
+            <div class="paper-preview-name">Mis XV Años</div>
+            <div class="paper-preview-sub">Invitación especial</div>
+          </div>
+
+          <div class="envelope-front"></div>
+          <div class="envelope-flap"></div>
+
+          <div class="wax-seal"><span>XV</span></div>
+
+          <div class="spark s1"></div>
+          <div class="spark s2"></div>
+          <div class="spark s3"></div>
+          <div class="spark s4"></div>
+          <div class="spark s5"></div>
+          <div class="spark s6"></div>
+        </div>
+      </div>
+
+      <p class="tap-note">Tocar para abrir</p>
+    </div>
+  </section>
+
+  <section id="invitation">
+    <div class="main-wrapper">
+
+      <header class="hero-card card section-reveal">
+        <div class="hero-glow"></div>
+        <p class="hero-pretitle">Mis XV Años</p>
+        <h2 class="hero-name" id="nombreQuince">Camila Benítez</h2>
+        <p class="hero-date" id="fechaPrincipal">Sábado 25 de Octubre de 2026 · 21:00 hs</p>
+
+        <div class="hero-photos">
+          <div class="photo-frame photo-small">
+            <img id="foto1" src="img/foto1.jpg" alt="Foto 1">
+          </div>
+          <div class="photo-frame photo-large">
+            <img id="foto2" src="img/foto2.jpg" alt="Foto 2">
+          </div>
+          <div class="photo-frame photo-small">
+            <img id="foto3" src="img/foto3.jpg" alt="Foto 3">
+          </div>
+        </div>
+      </header>
+
+      <section class="welcome-card card section-reveal" style="animation-delay:.06s;">
+        <div class="section-icon-wrap">
+          <div class="section-icon">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M32 6l5 11 12 2-9 8 3 12-11-6-11 6 3-12-9-8 12-2z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="section-deco"></div>
+        <p class="section-mini" style="text-align:center;">Bienvenida</p>
+        <h3 class="section-title">Una noche soñada</h3>
+        <p class="welcome-text" id="welcomeText">
+          Con mucha ilusión, quiero invitarte a compartir conmigo una noche mágica, soñada e inolvidable.
+        </p>
+      </section>
+
+      <section class="date-card card section-reveal" style="animation-delay:.1s;">
+        <div class="section-icon-wrap">
+          <div class="section-icon">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M18 8h4v8h-4zm24 0h4v8h-4zM12 18h40v34H12zM12 24h40v4H12zM20 34h8v8h-8zm16 0h8v8h-8z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="section-deco"></div>
+        <p class="section-mini" style="text-align:center;">Fecha del evento</p>
+        <h3 class="section-title">Reserva este día</h3>
+        <p class="date-text">Prepárate para vivir una velada encantada llena de emoción, alegría y momentos inolvidables.</p>
+        <div class="highlight-date" id="dateHighlight" style="margin-top:14px;">
+          Sábado 25 de Octubre de 2026 · 21:00 hs
+        </div>
+      </section>
+
+      <section class="section-card card section-reveal" style="animation-delay:.14s;">
+        <div class="section-icon-wrap">
+          <div class="section-icon">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M20 8h24v6H20zM22 14h20c0 8-5 10-8 13 3 3 8 5 8 13H22c0-8 5-10 8-13-3-3-8-5-8-13zM20 50h24v6H20z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="section-deco"></div>
+        <p class="section-mini" style="text-align:center;">Cuenta regresiva</p>
+        <h3 class="section-title">La magia comienza en...</h3>
+
+        <div class="countdown-grid">
+          <div class="count-box"><span id="days">00</span><small>Días</small></div>
+          <div class="count-box"><span id="hours">00</span><small>Horas</small></div>
+          <div class="count-box"><span id="minutes">00</span><small>Minutos</small></div>
+          <div class="count-box"><span id="seconds">00</span><small>Segundos</small></div>
+        </div>
+      </section>
+
+      <section class="moments-card card section-reveal" style="animation-delay:.18s;">
+        <div class="section-icon-wrap">
+          <div class="section-icon">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M32 8l4 10 10 4-10 4-4 10-4-10-10-4 10-4zM46 34l2 5 5 2-5 2-2 5-2-5-5-2 5-2zM18 34l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="section-deco"></div>
+        <p class="section-mini" style="text-align:center;">Momentos de la noche</p>
+        <h3 class="section-title">Una velada encantada</h3>
+
+        <div class="moments-grid">
+          <div class="moment-box">
+            <div class="moment-icon">
+              <svg viewBox="0 0 64 64" aria-hidden="true">
+                <path d="M14 56V30h10v26H14zm26 0V30h10v26H40zM24 56V36l8-6 8 6v20H24zm-1-26l9-10 9 10H23z"/>
+              </svg>
+            </div>
+            <strong>Ceremonia</strong>
+            <span>Un inicio lleno de emoción y gratitud.</span>
+          </div>
+
+          <div class="moment-box">
+            <div class="moment-icon">
+              <svg viewBox="0 0 64 64" aria-hidden="true">
+                <path d="M12 56V24l20-12 20 12v32H12zm10-18h20v18H22z"/>
+              </svg>
+            </div>
+            <strong>Recepción</strong>
+            <span>El comienzo de una noche mágica.</span>
+          </div>
+
+          <div class="moment-box">
+            <div class="moment-icon">
+              <svg viewBox="0 0 64 64" aria-hidden="true">
+                <path d="M24 18a4 4 0 1 1 8 0 4 4 0 0 1-8 0zm10 6l8 6-4 6-8-4-4 6h-8l8-12 8-2z"/>
+              </svg>
+            </div>
+            <strong>Vals</strong>
+            <span>Un instante inolvidable y especial.</span>
+          </div>
+
+          <div class="moment-box">
+            <div class="moment-icon">
+              <svg viewBox="0 0 64 64" aria-hidden="true">
+                <path d="M32 8l4 10 10 4-10 4-4 10-4-10-10-4 10-4z"/>
+              </svg>
+            </div>
+            <strong>Fiesta</strong>
+            <span>Celebración, alegría y recuerdos para siempre.</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="info-grid">
+        <article class="info-card card section-reveal" style="animation-delay:.22s;">
+          <div class="section-icon-wrap">
+            <div class="section-icon">
+              <svg viewBox="0 0 64 64" aria-hidden="true">
+                <path d="M8 56h48v4H8zM14 54V28h10v26H14zm26 0V28h10v26H40zM24 54V34l8-6 8 6v20H24zm-1-26l9-10 9 10H23zM17 12h4v8h-4zm26 0h4v8h-4zM18 8h2v4h-2zm26 0h2v4h-2zM28 54V40h8v14h-8z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="card-line"></div>
+          <p class="section-mini">Ceremonia Religiosa</p>
+          <h3 class="card-title" id="iglesiaNombre">Parroquia San José</h3>
+          <p class="card-text" id="iglesiaDireccion">Av. Ejemplo 123, Ciudad</p>
+          <p class="card-text strong" id="iglesiaHora">19:00 hs</p>
+          <a id="linkIglesia" class="lux-button" href="https://maps.google.com" target="_blank" rel="noopener noreferrer">Ver ubicación</a>
+        </article>
+
+        <article class="info-card card section-reveal" style="animation-delay:.26s;">
+          <div class="section-icon-wrap">
+            <div class="section-icon">
+              <svg viewBox="0 0 64 64" aria-hidden="true">
+                <path d="M8 56h48v4H8zM12 54V24l20-12 20 12v30H12zm10-18h20v18H22zm-4-8h28v4H18zm6-8h16v4H24z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="card-line"></div>
+          <p class="section-mini">Recepción</p>
+          <h3 class="card-title" id="eventoNombre">Salón Encanto Real</h3>
+          <p class="card-text" id="eventoDireccion">Ruta Ejemplo km 5, Ciudad</p>
+          <p class="card-text strong" id="eventoHora">21:00 hs</p>
+          <a id="linkEvento" class="lux-button" href="https://maps.google.com" target="_blank" rel="noopener noreferrer">Ver ubicación</a>
+        </article>
+      </div>
+
+      <section class="section-card card section-reveal" style="animation-delay:.30s;">
+        <div class="section-icon-wrap">
+          <div class="section-icon">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M26 12c0-4 2-6 6-6s6 2 6 6l6 8-6 6 4 26H22l4-26-6-6 6-8z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="section-deco"></div>
+        <p class="section-mini" style="text-align:center;">Código de Vestimenta</p>
+        <h3 class="section-title" id="dressCodeTitulo">Elegante</h3>
+        <p class="dress-text" id="dressCodeTexto">
+          Vestimenta elegante para una noche encantada llena de luz, magia y momentos inolvidables.
+        </p>
+      </section>
+
+      <section class="section-card card section-reveal" style="animation-delay:.34s;">
+        <div class="section-icon-wrap">
+          <div class="section-icon">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M10 18h44v28H10zM10 18l22 16 22-16M24 14h16v4H24M28 28h8v8h-8z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="section-deco"></div>
+        <p class="section-mini" style="text-align:center;">Confirmación</p>
+        <h3 class="section-title">Tu presencia es importante</h3>
+        <p class="confirm-text" id="confirmText">
+          Tu presencia hará aún más especial esta celebración. Agradeceré tu confirmación para compartir juntos esta noche soñada.
+        </p>
+      </section>
+
+      <section class="actions-grid">
+        <a id="confirmarBtn" class="action-card action-confirm card section-reveal" style="animation-delay:.38s;" href="#" target="_blank" rel="noopener noreferrer">
+          <div class="action-shine"></div>
+          <p class="action-mini">Asistencia</p>
+          <h3>Confirmar por WhatsApp</h3>
+          <span>Haz clic aquí para confirmar tu presencia.</span>
+        </a>
+      </section>
+
+      <section class="section-card card section-reveal" style="animation-delay:.42s;">
+        <div class="section-icon-wrap">
+          <div class="section-icon">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M14 10h28l8 8v36H14zM42 10v10h10M22 40c10-3 15-9 18-18M22 40l-4 10 10-4"/>
+            </svg>
+          </div>
+        </div>
+        <div class="section-deco"></div>
+        <p class="section-mini" style="text-align:center;">Mural de recuerdos</p>
+        <h3 class="section-title">Déjame un mensaje</h3>
+        <p class="mural-text" id="muralText">
+          Si deseas, puedes dejar un mensaje especial y formar parte de este recuerdo para siempre.
+        </p>
+      </section>
+
+      <section class="actions-grid">
+        <a id="muralBtn" class="action-card action-wall card section-reveal" style="animation-delay:.46s;" href="https://padlet.com" target="_blank" rel="noopener noreferrer">
+          <div class="action-shine"></div>
+          <p class="action-mini">Mural</p>
+          <h3>Escribir en Padlet</h3>
+          <span>Comparte un mensaje especial en el mural de recuerdos.</span>
+        </a>
+      </section>
+
+      <section class="closing-card card section-reveal" style="animation-delay:.5s;">
+        <div class="section-icon-wrap">
+          <div class="section-icon">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M12 44h40l-4 8H16zM18 24l8 8 6-10 6 10 8-8 4 20H14z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="section-deco"></div>
+        <p class="section-mini">Cierre</p>
+        <h3 class="section-title">Gracias</h3>
+        <p class="closing-text" id="closingText">
+          Gracias por acompañarme en uno de los momentos más importantes de mi vida.
+        </p>
+        <div class="closing-name" id="closingName">Analia</div>
+      </section>
+    </div>
+  </section>
+
+  <script>
+    const invitationData = {
+      quinceanera: "Analia Elizabeth Aquino Mieres",
+      fechaEventoISO: "2026-10-25T21:00:00",
+      fechaVisible: "Sábado 25 de Octubre de 2026 · 21:00 hs",
+      fotos: ["img/foto1.jpg", "img/foto2.jpg", "img/foto3.jpg"],
+
+      bienvenida: "Con mucha ilusión, quiero invitarte a compartir conmigo una noche mágica, soñada e inolvidable.",
+      fechaDestacada: "Sábado 25 de Octubre de 2026 · 21:00 hs",
+
+      ceremonia: {
+        nombre: "Parroquia Espiritu Santo",
+        direccion: "Av. Ejemplo 123, Ciudad",
+        hora: "19:00 hs",
+        ubicacion: "https://maps.google.com"
+      },
+
+      recepcion: {
+        nombre: "Salón Municipal De Fram",
+        direccion: "Ruta Ejemplo km 5, Ciudad",
+        hora: "21:00 hs",
+        ubicacion: "https://maps.google.com"
+      },
+
+      dressCode: {
+        titulo: "Elegante",
+        texto: "Vestimenta elegante para una noche encantada llena de luz, magia y momentos inolvidables."
+      },
+
+      confirmacionTexto: "Tu presencia hará aún más especial esta celebración. Agradeceré tu confirmación para compartir juntos esta noche soñada.",
+      muralTexto: "Si deseas, puedes dejar un mensaje especial y formar parte de este recuerdo para siempre.",
+
+      whatsapp: {
+        telefono: "595981000000",
+        mensaje: "Hola, confirmo mi asistencia a los XV de Analia Aquino."
+      },
+
+      muralPadlet: "https://padlet.com",
+      cierreTexto: "Gracias por acompañarme en uno de los momentos más importantes de mi vida.",
+      cierreFirma: "Analia"
+    };
+
+    const intro = document.getElementById("intro");
+    const invitation = document.getElementById("invitation");
+    const sobre = document.getElementById("sobre");
+    const bgMusic = document.getElementById("bgMusic");
+    let opened = false;
+
+    function loadInvitationData() {
+      document.getElementById("nombreQuince").textContent = invitationData.quinceanera;
+      document.getElementById("fechaPrincipal").textContent = invitationData.fechaVisible;
+      document.getElementById("foto1").src = invitationData.fotos[0];
+      document.getElementById("foto2").src = invitationData.fotos[1];
+      document.getElementById("foto3").src = invitationData.fotos[2];
+
+      document.getElementById("welcomeText").textContent = invitationData.bienvenida;
+      document.getElementById("dateHighlight").textContent = invitationData.fechaDestacada;
+
+      document.getElementById("iglesiaNombre").textContent = invitationData.ceremonia.nombre;
+      document.getElementById("iglesiaDireccion").textContent = invitationData.ceremonia.direccion;
+      document.getElementById("iglesiaHora").textContent = invitationData.ceremonia.hora;
+      document.getElementById("linkIglesia").href = invitationData.ceremonia.ubicacion;
+
+      document.getElementById("eventoNombre").textContent = invitationData.recepcion.nombre;
+      document.getElementById("eventoDireccion").textContent = invitationData.recepcion.direccion;
+      document.getElementById("eventoHora").textContent = invitationData.recepcion.hora;
+      document.getElementById("linkEvento").href = invitationData.recepcion.ubicacion;
+
+      document.getElementById("dressCodeTitulo").textContent = invitationData.dressCode.titulo;
+      document.getElementById("dressCodeTexto").textContent = invitationData.dressCode.texto;
+
+      document.getElementById("confirmText").textContent = invitationData.confirmacionTexto;
+      document.getElementById("muralText").textContent = invitationData.muralTexto;
+
+      document.getElementById("closingText").textContent = invitationData.cierreTexto;
+      document.getElementById("closingName").textContent = invitationData.cierreFirma;
+
+      const whatsappLink = `https://wa.me/${invitationData.whatsapp.telefono}?text=${encodeURIComponent(invitationData.whatsapp.mensaje)}`;
+      document.getElementById("confirmarBtn").href = whatsappLink;
+      document.getElementById("muralBtn").href = invitationData.muralPadlet;
+    }
+
+    function updateCountdown() {
+      const targetDate = new Date(invitationData.fechaEventoISO).getTime();
+      const now = new Date().getTime();
+      const difference = targetDate - now;
+
+      const daysEl = document.getElementById("days");
+      const hoursEl = document.getElementById("hours");
+      const minutesEl = document.getElementById("minutes");
+      const secondsEl = document.getElementById("seconds");
+
+      if (difference <= 0) {
+        daysEl.textContent = "00";
+        hoursEl.textContent = "00";
+        minutesEl.textContent = "00";
+        secondsEl.textContent = "00";
+        return;
+      }
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((difference / (1000 * 60)) % 60);
+      const seconds = Math.floor((difference / 1000) % 60);
+
+      daysEl.textContent = String(days).padStart(2, "0");
+      hoursEl.textContent = String(hours).padStart(2, "0");
+      minutesEl.textContent = String(minutes).padStart(2, "0");
+      secondsEl.textContent = String(seconds).padStart(2, "0");
+    }
+
+    function abrirInvitacion() {
+      if (opened) return;
+      opened = true;
+
+      sobre.classList.add("open");
+
+      try {
+        bgMusic.volume = 0.85;
+        bgMusic.play();
+      } catch (e) {}
+
+      setTimeout(() => {
+        intro.style.display = "none";
+        invitation.style.display = "block";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 1250);
+    }
+
+    sobre.addEventListener("click", abrirInvitacion);
+
+    loadInvitationData();
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
